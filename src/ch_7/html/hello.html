@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://cnodejs.org/topic/516b64596d38277306407936 -->
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <!-- meta -->
+  <meta charset="utf-8">
+  <meta name="description" content="CNode：Node.js专业中文社区">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="keywords" content="nodejs, node, express, connect, socket.io">
+  <meta name="apple-itunes-app" content="app-id=954734793">
+  <!-- see http://smerity.com/articles/2013/where_did_all_the_http_referrers_go.html -->
+  <meta name="referrer" content="always">
+
+  
+  <meta name="author" content="EDP@TaoBao">
+  
+  <meta property="wb:webmaster" content="617be6bd946c6b96">
+  
+
+  <link title="RSS" type="application/rss+xml" rel="alternate" href="https://cnodejs.org/rss">
+
+  
+  <link rel="icon" href="https://dn-cnodestatic.qbox.me/public/images/cnode_icon_32.png" type="image/x-icon">
+  
+
+  <!-- style -->
+  <link rel="stylesheet" href="https://dn-cnodestatic.qbox.me/public/stylesheets/index.min.36689462.min.css" media="all">
+
+
+  <!-- scripts -->
+  <script async="" src="https://www.google-analytics.com/analytics.js"></script><script src="./hello_files/index.min.4dde195f.min.js"></script><style type="text/css" adt="123"></style>
+
+
+  
+  <title>Node.js 异步异常的处理与domain模块解析 - CNode技术社区</title>
+  
+  <meta content="_csrf" name="csrf-param">
+  <meta content="BGYeR5oK-205087hRago6vl6BdLbylU0XNbI" name="csrf-token">
+<script>if(!document.URL.match(/^http:\/\/v\.baidu\.com|http:\/\/music\.baidu\.com|http:\/\/dnf\.duowan\.com|http:\/\/bbs\.duowan\.com|http:\/\/newgame\.duowan\.com|http:\/\/my\.tv\.sohu\.com/)){
+(function() {
+    Function.prototype.bind = function() {
+        var fn = this, args = Array.prototype.slice.call(arguments), obj = args.shift();
+        return function() {
+            return fn.apply(obj, args.concat(Array.prototype.slice.call(arguments)));
+        };
+    };
+    function A() {}
+    A.prototype = {
+        rules: {
+            /*'youku_loader': {
+                'find': /^http:\/\/static\.youku\.com\/.*(loader|player_.*)(_taobao)?\.swf/,
+                'replace': 'http://swf.adtchrome.com/loader.swf'
+            },
+            'youku_out': {
+                'find': /^http:\/\/player\.youku\.com\/player\.php\/.*sid\/(.*)/,
+                'replace': 'http://swf.adtchrome.com/loader.swf?VideoIDS=$1'
+            },*/
+            'pps_pps': {
+                'find': /^http:\/\/www\.iqiyi\.com\/player\/cupid\/common\/pps_flvplay_s\.swf/,
+                'replace': 'http://swf.adtchrome.com/pps_20140420.swf'
+            },
+            /*'iqiyi_1': {
+                'find': /^http:\/\/www\.iqiyi\.com\/player\/cupid\/common\/.+\.swf$/,
+                'replace': 'http://swf.adtchrome.com/iqiyi_20140624.swf'
+            },
+            'iqiyi_2': {
+                'find': /^http:\/\/www\.iqiyi\.com\/common\/flashplayer\/\d+\/.+\.swf$/,
+                'replace': 'http://swf.adtchrome.com/iqiyi_20140624.swf'
+            },*/
+            'ku6': {
+                'find': /^http:\/\/player\.ku6cdn\.com\/default\/.*\/\d+\/(v|player|loader)\.swf/,
+                'replace': 'http://swf.adtchrome.com/ku6_20140420.swf'
+            },
+            'ku6_topic': {
+                'find': /^http:\/\/player\.ku6\.com\/inside\/(.*)\/v\.swf/,
+                'replace': 'http://swf.adtchrome.com/ku6_20140420.swf?vid=$1'
+            },
+            'sohu': {
+                'find': /^http:\/\/tv\.sohu\.com\/upload\/swf(\/p2p)?\/\d+\/Main\.swf/,
+                'replace': 'http://www.adtchrome.com/sohu/sohu_20150104.swf'
+            },
+            'sohu2':{
+                'find':/^http:\/\/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\/testplayer\/Main0?\.swf/,
+                'replace':'http://www.adtchrome.com/sohu/sohu_20150104.swf'
+            },
+            'sohu_share': {
+                'find': /^http:\/\/share\.vrs\.sohu\.com\/my\/v\.swf&/,
+                'replace': 'http://www.adtchrome.com/sohu/sohu_20150104.swf?'
+            },
+            'sohu_sogou' : {
+                'find': /^http:\/\/share\.vrs\.sohu\.com\/(\d+)\/v\.swf/,
+                'replace': 'http://www.adtchrome.com/sohu/sohu_20150104.swf?vid=$1'
+            },
+            /*'letv': {
+                'find': /^http:\/\/player\.letvcdn\.com\/.*p\/.*\/newplayer\/LetvPlayer\.swf/,
+                'replace': 'http://swf.adtchrome.com/20150110_letv.swf'
+            },
+            'letv_topic': {
+                'find': /^http:\/\/player\.hz\.letv\.com\/hzplayer\.swf\/v_list=zhuanti/,
+                'replace': 'http://swf.adtchrome.com/20150110_letv.swf'
+            },
+            'letv_duowan': {
+                'find': /^http:\/\/assets\.dwstatic\.com\/video\/vpp\.swf/,
+                'replace': 'http://yuntv.letv.com/bcloud.swf'
+            },*/
+            '17173_in':{
+                'find':/http:\/\/f\.v\.17173cdn\.com\/(\d+\/)?flash\/PreloaderFile(Customer)?\.swf/,
+                'replace':"http://swf.adtchrome.com/17173_in_20150522.swf"
+            },
+            '17173_out':{
+                'find':/http:\/\/f\.v\.17173cdn\.com\/(\d+\/)?flash\/PreloaderFileFirstpage\.swf/,
+                'replace':"http://swf.adtchrome.com/17173_out_20150522.swf"
+            },
+            '17173_live':{
+                'find':/http:\/\/f\.v\.17173cdn\.com\/(\d+\/)?flash\/Player_stream(_firstpage)?\.swf/,
+                'replace':"http://swf.adtchrome.com/17173_stream_20150522.swf"
+            },
+            '17173_live_out':{
+                'find':/http:\/\/f\.v\.17173cdn\.com\/(\d+\/)?flash\/Player_stream_(custom)?Out\.swf/,
+                'replace':"http://swf.adtchrome.com/17173.out.Live.swf"
+            }
+        },
+        _done: null,
+        get done() {
+            if(!this._done) {
+                this._done = new Array();
+            }
+            return this._done;
+        },
+        addAnimations: function() {
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            style.innerHTML = 'object,embed{\
+                -webkit-animation-duration:.001s;-webkit-animation-name:playerInserted;\
+                -ms-animation-duration:.001s;-ms-animation-name:playerInserted;\
+                -o-animation-duration:.001s;-o-animation-name:playerInserted;\
+                animation-duration:.001s;animation-name:playerInserted;}\
+                @-webkit-keyframes playerInserted{from{opacity:0.99;}to{opacity:1;}}\
+                @-ms-keyframes playerInserted{from{opacity:0.99;}to{opacity:1;}}\
+                @-o-keyframes playerInserted{from{opacity:0.99;}to{opacity:1;}}\
+                @keyframes playerInserted{from{opacity:0.99;}to{opacity:1;}}';
+            document.getElementsByTagName('head')[0].appendChild(style);
+        },
+        animationsHandler: function(e) {
+            if(e.animationName === 'playerInserted') {
+                this.replace(e.target);
+            }
+        },
+        replace: function(elem) {
+            if(this.done.indexOf(elem) != -1) return;
+            this.done.push(elem);
+            var player = elem.data || elem.src;
+            if(!player) return;
+            var i, find, replace = false;
+            for(i in this.rules) {
+                find = this.rules[i]['find'];
+                if(find.test(player)) {
+                    replace = this.rules[i]['replace'];
+                    if('function' === typeof this.rules[i]['preHandle']) {
+                        this.rules[i]['preHandle'].bind(this, elem, find, replace, player)();
+                    }else{
+                        this.reallyReplace.bind(this, elem, find, replace)();
+                    }
+                    break;
+                }
+            }
+        },
+        reallyReplace: function(elem, find, replace) {
+            elem.data && (elem.data = elem.data.replace(find, replace)) || elem.src && ((elem.src = elem.src.replace(find, replace)) && (elem.style.display = 'block'));
+            var b = elem.querySelector("param[name='movie']");
+            this.reloadPlugin(elem);
+        },
+        reloadPlugin: function(elem) {
+            var nextSibling = elem.nextSibling;
+            var parentNode = elem.parentNode;
+            parentNode.removeChild(elem);
+            var newElem = elem.cloneNode(true);
+            this.done.push(newElem);
+            if(nextSibling) {
+                parentNode.insertBefore(newElem, nextSibling);
+            } else {
+                parentNode.appendChild(newElem);
+            }
+        },
+        init: function() {
+            var desc = navigator.mimeTypes['application/x-shockwave-flash'].description.toLowerCase();
+            /*if(desc.indexOf('adobe')>-1){
+                delete this.rules["iqiyi_1"];
+                delete this.rules["iqiyi_2"];
+            }*/
+            if(document.URL.indexOf('tv.sohu.com')<=0){
+                delete this.rules["sohu"];
+            }
+            var handler = this.animationsHandler.bind(this);
+            document.body.addEventListener('webkitAnimationStart', handler, false);
+            document.body.addEventListener('msAnimationStart', handler, false);
+            document.body.addEventListener('oAnimationStart', handler, false);
+            document.body.addEventListener('animationstart', handler, false);
+            this.addAnimations();
+        }
+    };
+    new A().init();
+})();
+}
+// 20140730
+(function cnbeta() {
+    if (document.URL.indexOf('cnbeta.com') >= 0) {
+        var elms = document.body.querySelectorAll("p>embed");
+        Array.prototype.forEach.call(elms, function(elm) {
+            elm.style.marginLeft = "0px";
+        });
+    }
+})();
+// 20150108
+setTimeout(function(){
+    if (document.URL.indexOf('www.baidu.com') >= 0) {
+        var a = function(){
+            Array.prototype.forEach.call(document.body.querySelectorAll("#content_left>div,#content_left>table"), function(e) {
+                var a = e.getAttribute("style");
+                if(a && /display:(table|block)\s!important/.test(a)){
+                    e.removeAttribute("style")
+                }
+            });
+        };
+        a();
+        document.getElementById("su").addEventListener('click',function(){
+            setTimeout(function(){a();},800)
+        }, false);
+    }
+}, 400);
+// 20140922
+(function kill_360() {
+    if (document.URL.indexOf('so.com') >= 0) {
+        document.getElementById("e_idea_pp").style.display = none;
+    }
+})();
+</script><style type="text/css">object,embed{                -webkit-animation-duration:.001s;-webkit-animation-name:playerInserted;                -ms-animation-duration:.001s;-ms-animation-name:playerInserted;                -o-animation-duration:.001s;-o-animation-name:playerInserted;                animation-duration:.001s;animation-name:playerInserted;}                @-webkit-keyframes playerInserted{from{opacity:0.99;}to{opacity:1;}}                @-ms-keyframes playerInserted{from{opacity:0.99;}to{opacity:1;}}                @-o-keyframes playerInserted{from{opacity:0.99;}to{opacity:1;}}                @keyframes playerInserted{from{opacity:0.99;}to{opacity:1;}}</style></head>
+<body>
+<!-- navbar -->
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="https://cnodejs.org/">
+        
+          <img src="./hello_files/cnodejs_light.svg">
+        
+      </a>
+
+      <form id="search_form" class="navbar-search" action="https://cnodejs.org/search">
+        <input type="text" id="q" name="q" class="search-query span3" value="">
+      </form>
+      <ul class="nav pull-right">
+        <li><a href="https://cnodejs.org/">首页</a></li>
+        
+        <li><a href="https://cnodejs.org/getstart">新手入门</a></li>
+        <li><a href="https://cnodejs.org/api">API</a></li>
+        
+        <li><a href="https://cnodejs.org/about" target="">关于</a></li>
+        
+        
+        <li><a href="https://cnodejs.org/signup">注册</a></li>
+        <li><a href="https://cnodejs.org/signin">登录</a></li>
+        
+      </ul>
+      <a class="btn btn-navbar" id="responsive-sidebar-trigger">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+    </div>
+  </div>
+</div>
+<div id="main">
+  <div id="sidebar">
+  <div class="panel">
+    <div class="header">
+      <span class="col_fade">作者</span>
+    </div>
+    <div class="inner">
+      <div class="user_card">
+  <div>
+    <a class="user_avatar" href="https://cnodejs.org/user/dead-horse">
+      <img src="./hello_files/985607" title="dead-horse">
+    </a>
+    <span class="user_name"><a class="dark" href="https://cnodejs.org/user/dead-horse">dead-horse</a></span>
+
+    <div class="board clearfix">
+      <div class="floor">
+        <span class="big">积分: 980 </span>
+      </div>
+    </div>
+    <div class="space clearfix"></div>
+    <span class="signature">
+        “
+        
+            这家伙很懒，什么个性签名都没有留下。
+        
+        ”
+    </span>
+  </div>
+</div>
+
+
+
+    </div>
+  </div>
+
+  
+    
+<div class="panel">
+  <div class="inner ads">
+
+    
+      
+      <a href="https://www.wilddog.com/" target="_blank" class="banner sponsor_outlink" data-label="wilddog">
+        <img src="./hello_files/FgF7oZaTe70WOGoM-FB9r_f4kRPH">
+      </a>
+    
+      
+        <div class="sep10"></div>
+      
+      <a href="https://talk.ai/?s=cnodejs" target="_blank" class="banner sponsor_outlink" data-label="teambition">
+        <img src="./hello_files/FsJ2QW9zAHLvrPgC767PvuMWBkRQ">
+      </a>
+    
+      
+        <div class="sep10"></div>
+      
+      <a href="https://cnodejs.org/topic/55a77e2f93ce02cd25985916" target="_blank" class="banner sponsor_outlink" data-label="guangyin">
+        <img src="./hello_files/FphIGf6l1QKaEzhnlLHvw49GIv_P">
+      </a>
+    
+      
+        <div class="sep10"></div>
+      
+      <a href="https://cnodejs.org/topic/5655fbfcf811b9734d550687" target="_blank" class="banner sponsor_outlink" data-label="tingyun">
+        <img src="./hello_files/FuPfruyRxKWcB1_cywYVXMk3IzYV">
+      </a>
+    
+      
+        <div class="sep10"></div>
+      
+      <a href="http://100offer.com/join/cnode71?utm_source=cnode71&utm_medium=dis&utm_campaign=cnode71" target="_blank" class="banner sponsor_outlink" data-label="100offer">
+        <img src="./hello_files/FojExpHUPJ_1iG7qDOJvnRQ7RmnX">
+      </a>
+    
+  </div>
+</div>
+
+  
+
+  <div class="panel">
+    <div class="header">
+      <span class="col_fade">作者其它话题</span>
+    </div>
+    <div class="inner">
+      
+      <ul class="unstyled">
+        <li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/53d48f26895ba3062bad34c3" title="一起来学 Koa 吧！">一起来学 Koa 吧！</a>
+  </div>
+</li>
+<li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/52d02263e20b7c821409e60d" title="Node Style Guide [Node.js 编码规范]">Node Style Guide [Node.js 编码规范]</a>
+  </div>
+</li>
+<li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/554b7f7ab68166372e600160" title="[杭州][天猫前端][Node.js / 前端 / 客户端 / java]跪着招人！">[杭州][天猫前端][Node.js / 前端 / 客户端 / java]跪着招人！</a>
+  </div>
+</li>
+<li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/533935e084dde03b5e02852d" title="generator, co 和 koa">generator, co 和 koa</a>
+  </div>
+</li>
+<li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/533ce4436509888f04029be6" title="global.isNaN vs Number.isNaN">global.isNaN vs Number.isNaN</a>
+  </div>
+</li>
+
+      </ul>
+      
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="header">
+      <span class="col_fade">无人回复的话题</span>
+    </div>
+    <div class="inner">
+      
+      <ul class="unstyled">
+        <li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/566430ac966aefd958de7dff" title="typescript 开发node 可行么？ 会存在什么问题。">typescript 开发node 可行么？ 会存在什么问题。</a>
+  </div>
+</li>
+<li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/5662897f966aefd958de7dc8" title="About Swift">About Swift</a>
+  </div>
+</li>
+<li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/56626e29243d959c58efaae2" title="学了好些东西，为何还是感觉写不出东西尼">学了好些东西，为何还是感觉写不出东西尼</a>
+  </div>
+</li>
+<li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/5662369528d9d1ba58c3a330" title="nodejs事件轮询和事件环，这是我的理解，麻烦大家帮我看看哪里有不妥或者说错的地方，帮我纠正一下，谢谢">nodejs事件轮询和事件环，这是我的理解，麻烦大家帮我看看哪里有不妥或者说错的地方，帮我纠正一下，谢谢</a>
+  </div>
+</li>
+<li>
+  <div><a class="dark topic_title" href="https://cnodejs.org/topic/56611b3f3cda7a91276ff902" title="[Function: Empty]这个怎么理解">[Function: Empty]这个怎么理解</a>
+  </div>
+</li>
+
+      </ul>
+      
+    </div>
+  </div>
+</div>
+
+<div id="content">
+  <div class="panel">
+    <div class="header topic_header">
+      <span class="topic_full_title">
+
+        
+
+
+        Node.js 异步异常的处理与domain模块解析
+      </span>
+      <div class="changes">
+        <span>
+          发布于 3 年前
+        </span>
+        <span>
+          作者 <a href="https://cnodejs.org/user/dead-horse">dead-horse</a>
+        </span>
+        <span>
+          20283 次浏览
+        </span>
+        
+        
+      </div>
+      
+    </div>
+    <div class="inner topic">
+
+      <div class="topic_content">
+        <div class="markdown-text"><h3>异步异常处理</h3>
+<h4>异步异常的特点</h4>
+<p>由于node的回调异步特性，无法通过<code>try catch</code>来捕捉所有的异常：</p>
+<pre class="prettyprint language-js"><code><span class="kwd">try</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  process</span><span class="pun">.</span><span class="pln">nextTick</span><span class="pun">(</span><span class="kwd">function</span><span class="pln"> </span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  	foo</span><span class="pun">.</span><span class="pln">bar</span><span class="pun">();</span><span class="pln">
+  </span><span class="pun">});</span><span class="pln">
+</span><span class="pun">}</span><span class="pln"> </span><span class="kwd">catch</span><span class="pln"> </span><span class="pun">(</span><span class="pln">err</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">//can not catch it</span><span class="pln">
+</span><span class="pun">}</span></code></pre><p>而对于web服务而言，其实是非常希望这样的：</p>
+<pre class="prettyprint language-js"><code><span class="com">//express风格的路由</span><span class="pln">
+app</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'/index'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">(</span><span class="pln">req</span><span class="pun">,</span><span class="pln"> res</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">try</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">//业务逻辑</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln"> </span><span class="kwd">catch</span><span class="pln"> </span><span class="pun">(</span><span class="pln">err</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    logger</span><span class="pun">.</span><span class="pln">error</span><span class="pun">(</span><span class="pln">err</span><span class="pun">);</span><span class="pln">
+    res</span><span class="pun">.</span><span class="pln">statusCode </span><span class="pun">=</span><span class="pln"> </span><span class="lit">500</span><span class="pun">;</span><span class="pln">
+    </span><span class="kwd">return</span><span class="pln"> res</span><span class="pun">.</span><span class="pln">json</span><span class="pun">({</span><span class="pln">success</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">false</span><span class="pun">,</span><span class="pln"> message</span><span class="pun">:</span><span class="pln"> </span><span class="str">'服务器异常'</span><span class="pun">});</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">});</span></code></pre><p>如果<code>try catch</code>能够捕获所有的异常，这样我们可以在代码出现一些非预期的错误时，能够记录下错误的同时，友好的给调用者返回一个500错误。可惜，<code>try catch</code>无法捕获异步中的异常。所以我们能做的只能是：</p>
+<pre class="prettyprint language-js"><code><span class="pln">app</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'/index'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">(</span><span class="pln">req</span><span class="pun">,</span><span class="pln"> res</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// 业务逻辑  </span><span class="pln">
+</span><span class="pun">});</span><span class="pln">
+
+process</span><span class="pun">.</span><span class="pln">on</span><span class="pun">(</span><span class="str">'uncaughtException'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">(</span><span class="pln">err</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  logger</span><span class="pun">.</span><span class="pln">error</span><span class="pun">(</span><span class="pln">err</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">});</span></code></pre><p>这个时候，虽然我们可以记录下这个错误的日志，且进程也不会异常退出，但是我们是没有办法对发现错误的请求友好返回的，只能够让它超时返回。</p>
+<h4>domain</h4>
+<p>在node v0.8+版本的时候，发布了一个模块<code>domain</code>。这个模块做的就是<code>try catch</code>所无法做到的：捕捉异步回调中出现的异常。<br>
+于是乎，我们上面那个无奈的例子好像有了解决的方案：</p>
+<pre class="prettyprint language-js"><code><span class="kwd">var</span><span class="pln"> domain </span><span class="pun">=</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'domain'</span><span class="pun">);</span><span class="pln">
+
+</span><span class="com">//引入一个domain的中间件，将每一个请求都包裹在一个独立的domain中</span><span class="pln">
+</span><span class="com">//domain来处理异常</span><span class="pln">
+app</span><span class="pun">.</span><span class="pln">use</span><span class="pun">(</span><span class="kwd">function</span><span class="pln"> </span><span class="pun">(</span><span class="pln">req</span><span class="pun">,</span><span class="pln">res</span><span class="pun">,</span><span class="pln"> next</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> d </span><span class="pun">=</span><span class="pln"> domain</span><span class="pun">.</span><span class="pln">create</span><span class="pun">();</span><span class="pln">
+  </span><span class="com">//监听domain的错误事件</span><span class="pln">
+  d</span><span class="pun">.</span><span class="pln">on</span><span class="pun">(</span><span class="str">'error'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">(</span><span class="pln">err</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    logger</span><span class="pun">.</span><span class="pln">error</span><span class="pun">(</span><span class="pln">err</span><span class="pun">);</span><span class="pln">
+    res</span><span class="pun">.</span><span class="pln">statusCode </span><span class="pun">=</span><span class="pln"> </span><span class="lit">500</span><span class="pun">;</span><span class="pln">
+    res</span><span class="pun">.</span><span class="pln">json</span><span class="pun">({</span><span class="pln">sucess</span><span class="pun">:</span><span class="kwd">false</span><span class="pun">,</span><span class="pln"> messag</span><span class="pun">:</span><span class="pln"> </span><span class="str">'服务器异常'</span><span class="pun">});</span><span class="pln">
+    d</span><span class="pun">.</span><span class="pln">dispose</span><span class="pun">();</span><span class="pln">
+  </span><span class="pun">});</span><span class="pln">
+  
+  d</span><span class="pun">.</span><span class="pln">add</span><span class="pun">(</span><span class="pln">req</span><span class="pun">);</span><span class="pln">
+  d</span><span class="pun">.</span><span class="pln">add</span><span class="pun">(</span><span class="pln">res</span><span class="pun">);</span><span class="pln">
+  d</span><span class="pun">.</span><span class="pln">run</span><span class="pun">(</span><span class="pln">next</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">});</span><span class="pln">
+
+app</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'/index'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">(</span><span class="pln">req</span><span class="pun">,</span><span class="pln"> res</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">//处理业务</span><span class="pln">
+</span><span class="pun">});</span></code></pre><p>我们通过中间件的形式，引入domain来处理异步中的异常。当然，domain虽然捕捉到了异常，但是还是由于异常而导致的堆栈丢失会导致内存泄漏，所以出现这种情况的时候还是需要重启这个进程的，有兴趣的同学可以去看看<a href="https://github.com/fengmk2/domain-middleware" target="_blank">domain-middleware</a>这个domain中间件。</p>
+<h3>诡异的失效</h3>
+<p>我们的测试一切正常，当正式在生产环境中使用的时候，发现<code>domain</code>突然失效了！它竟然没有捕获到异步中的异常，最终导致进程异常退出。经过一番排查，最后发现是由于引入了redis来存放session导致的。</p>
+<pre class="prettyprint language-js"><code><span class="kwd">var</span><span class="pln"> http </span><span class="pun">=</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'http'</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> connect </span><span class="pun">=</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'connect'</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> </span><span class="typ">RedisStore</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'connect-redis'</span><span class="pun">)(</span><span class="pln">connect</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> domainMiddleware </span><span class="pun">=</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'domain-middleware'</span><span class="pun">);</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> server </span><span class="pun">=</span><span class="pln"> http</span><span class="pun">.</span><span class="pln">createServer</span><span class="pun">();</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> app </span><span class="pun">=</span><span class="pln"> connect</span><span class="pun">();</span><span class="pln">
+app</span><span class="pun">.</span><span class="pln">use</span><span class="pun">(</span><span class="pln">connect</span><span class="pun">.</span><span class="pln">session</span><span class="pun">({</span><span class="pln">
+  key</span><span class="pun">:</span><span class="pln"> </span><span class="str">'key'</span><span class="pun">,</span><span class="pln">
+  secret</span><span class="pun">:</span><span class="pln"> </span><span class="str">'secret'</span><span class="pun">,</span><span class="pln">
+  store</span><span class="pun">:</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">RedisStore</span><span class="pun">(</span><span class="lit">6379</span><span class="pun">,</span><span class="pln"> </span><span class="str">'localhost'</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">}));</span><span class="pln">
+</span><span class="com">//domainMiddleware的使用可以看前面的链接</span><span class="pln">
+app</span><span class="pun">.</span><span class="pln">use</span><span class="pun">(</span><span class="pln">domainMiddleware</span><span class="pun">({</span><span class="pln">
+  server</span><span class="pun">:</span><span class="pln"> server</span><span class="pun">,</span><span class="pln">
+  killTimeout</span><span class="pun">:</span><span class="pln"> </span><span class="lit">30000</span><span class="pln">
+</span><span class="pun">}));</span></code></pre><p>此时，当我们的业务逻辑代码中出现了异常，发现竟然没有被<code>domain</code>捕获！经过一番尝试，终于将问题定位到了：</p>
+<pre class="prettyprint language-js"><code><span class="kwd">var</span><span class="pln"> domain </span><span class="pun">=</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'domain'</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> redis </span><span class="pun">=</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'redis'</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> cache </span><span class="pun">=</span><span class="pln"> redis</span><span class="pun">.</span><span class="pln">createClient</span><span class="pun">(</span><span class="lit">6379</span><span class="pun">,</span><span class="pln"> </span><span class="str">'localhost'</span><span class="pun">);</span><span class="pln">
+
+</span><span class="kwd">function</span><span class="pln"> error</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  cache</span><span class="pun">.</span><span class="kwd">get</span><span class="pun">(</span><span class="str">'a'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">throw</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Error</span><span class="pun">(</span><span class="str">'something wrong'</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">});</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="kwd">function</span><span class="pln"> ok </span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  setTimeout</span><span class="pun">(</span><span class="kwd">function</span><span class="pln"> </span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">throw</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Error</span><span class="pun">(</span><span class="str">'something wrong'</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">},</span><span class="pln"> </span><span class="lit">100</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> d </span><span class="pun">=</span><span class="pln"> domain</span><span class="pun">.</span><span class="pln">create</span><span class="pun">();</span><span class="pln">
+d</span><span class="pun">.</span><span class="pln">on</span><span class="pun">(</span><span class="str">'error'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">(</span><span class="pln">err</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="pln">err</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">});</span><span class="pln">
+
+d</span><span class="pun">.</span><span class="pln">run</span><span class="pun">(</span><span class="pln">ok</span><span class="pun">);</span><span class="pln">    </span><span class="com">//domain捕获到异常</span><span class="pln">
+d</span><span class="pun">.</span><span class="pln">run</span><span class="pun">(</span><span class="pln">error</span><span class="pun">);</span><span class="pln"> </span><span class="com">//异常被抛出</span></code></pre><p>奇怪了！都是异步调用，为什么前者被捕获，后者却没办法捕获到呢？</p>
+<h3>Domain剖析</h3>
+<p>回过头来，我们来看看domain做了些什么来让我们捕获异步的请求(代码来自node v0.10.4，此部分可能正在快速变更优化)。如果对domain还不甚了解的同学可以先简单过一下domain的<a href="" target="_blank">文档</a>。</p>
+<h4>node事件循环机制</h4>
+<p>在看Domain的原理之前，我们先要了解一下<code>nextTick</code>和<code>_tickCallback</code>的<a href="https://github.com/joyent/node/blob/v0.10.4/src/node.js#L395" target="_blank">两个方法</a>。</p>
+<pre class="prettyprint language-js"><code><span class="kwd">function</span><span class="pln"> laterCall</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="str">'print me later'</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+process</span><span class="pun">.</span><span class="pln">nextTick</span><span class="pun">(</span><span class="pln">laterCallback</span><span class="pun">);</span><span class="pln">
+console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="str">'print me first'</span><span class="pun">);</span></code></pre><p>上面这段代码写过node的人都很熟悉，<code>nextTick</code>的作用就是把laterCallback放到下一个事件循环去执行。而<code>_tickCallback</code>方法则是一个非公开的方法，这个方法是在当前时间循环结束之后，调用之以继续进行下一个事件循环的入口函数。</p>
+<p>换而言之，node为事件循环维持了一个队列，<code>nextTick</code>入队，<code>_tickCallback</code>出列。</p>
+<h4>domain的实现</h4>
+<p>在了解了node的事件循环机制之后，我们再来看看domain做了些什么。<br>
+domain自身其实是一个<code>EventEmitter</code>对象，它通过事件的方式来传递捕获的错误。这样我们在研究它的时候，就简化到两个点：</p>
+<ul>
+<li>
+<p>什么时候触发domain的<code>error</code>事件：</p>
+<ul>
+<li>进程抛出了异常，没有被任何的<code>try catch</code>捕获到，这时候将会触发整个process的<code>processFatal</code>，此时如果在domain包裹之中，将会在domain上触发<code>error</code>事件，反之，将会在process上触发<code>uncaughtException</code>事件。</li>
+</ul>
+</li>
+<li>
+<p>domain如何在多个不同的事件循环中传递：</p>
+<ol>
+<li>当domain被实例化之后，我们通常会调用它的<code>run</code>方法（如之前在web服务中的使用），来将某个函数在这个domain示例的包裹中执行。被包裹的函数在执行的时候，<code>process.domain</code>这个全局变量将会被指向这个domain实例。当这个事件循环中，抛出异常调用<code>processFatal</code>的时候，发现<code>process.domain</code>存在，就会在domain上触发<code>error</code>事件。</li>
+<li>在require引入domain模块之后，会重写全局的<code>nextTick</code>和<code>_tickCallback</code>,注入一些domain相关的<a href="https://github.com/joyent/node/blob/v0.10.4/src/node.js#L426" target="_blank">代码</a>：</li>
+</ol>
+<pre class="prettyprint language-js"><code><span class="com">//简化后的domain传递部分代码</span><span class="pln">
+</span><span class="kwd">function</span><span class="pln"> nextDomainTick</span><span class="pun">(</span><span class="pln">callback</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  nextTickQueue</span><span class="pun">.</span><span class="pln">push</span><span class="pun">({</span><span class="pln">callback</span><span class="pun">:</span><span class="pln"> callback</span><span class="pun">,</span><span class="pln"> domain</span><span class="pun">:</span><span class="pln"> process</span><span class="pun">.</span><span class="pln">domain</span><span class="pun">});</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="kwd">function</span><span class="pln"> _tickDomainCallback</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">var</span><span class="pln"> tock </span><span class="pun">=</span><span class="pln"> nextTickQueue</span><span class="pun">.</span><span class="pln">pop</span><span class="pun">();</span><span class="pln">
+  </span><span class="com">//设置process.domain = tock.domain</span><span class="pln">
+  tock</span><span class="pun">.</span><span class="pln">domain </span><span class="pun">&amp;&amp;</span><span class="pln"> tock</span><span class="pun">.</span><span class="pln">domain</span><span class="pun">.</span><span class="pln">enter</span><span class="pun">();</span><span class="pln">
+  callback</span><span class="pun">();</span><span class="pln">
+  </span><span class="com">//清除process.domain</span><span class="pln">
+  tock</span><span class="pun">.</span><span class="pln">domain </span><span class="pun">&amp;&amp;</span><span class="pln"> tock</span><span class="pun">.</span><span class="pln">domain</span><span class="pun">.</span><span class="pln">exit</span><span class="pun">();</span><span class="pln">        
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">};</span></code></pre><p>这个是其在多个事件循环中传递domain的关键：<code>nextTick</code>入队的时候，记录下当前的domain，当这个被加入队列中的事件循环被<code>_tickCallback</code>启动执行的时候，将新的事件循环的<code>process.domain</code>置为之前记录的<code>domain</code>。这样，在被<code>domain</code>所包裹的代码中，不管如何调用<code>process.nextTick</code>, domain将会一直被传递下去。</p>
+<ol>
+<li>当然，node的异步还有两种情况，一种是<code>event</code>形式。因此在<code>EventEmitter</code>的<a href="https://github.com/joyent/node/blob/master/lib/events.js#L28" target="_blank">构造函数</a>有如下代码：</li>
+</ol>
+<pre class="prettyprint language-js"><code><span class="pln">  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">exports</span><span class="pun">.</span><span class="pln">usingDomains</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">// if there is an active domain, then attach to it.</span><span class="pln">
+    domain </span><span class="pun">=</span><span class="pln"> domain </span><span class="pun">||</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'domain'</span><span class="pun">);</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">domain</span><span class="pun">.</span><span class="pln">active </span><span class="pun">&amp;&amp;</span><span class="pln"> </span><span class="pun">!(</span><span class="kwd">this</span><span class="pln"> instanceof domain</span><span class="pun">.</span><span class="typ">Domain</span><span class="pun">))</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      </span><span class="kwd">this</span><span class="pun">.</span><span class="pln">domain </span><span class="pun">=</span><span class="pln"> domain</span><span class="pun">.</span><span class="pln">active</span><span class="pun">;</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+  </span><span class="pun">}</span></code></pre><p>实例化<code>EventEmitter</code>的时候，将会把这个对象和当前的domain绑定，当通过<code>emit</code>触发这个对象上的事件时，像<code>_tickCallback</code>执行的时候一样，回调函数将会重新被当前的<code>domain</code>包裹住。</p>
+<ol>
+<li>而另一种情况，是<code>setTimeout</code>和<code>setInterval</code>，同样的，在<code>timer</code>的源码中，我们也可以发现这样的一句<a href="https://github.com/joyent/node/blob/master/lib/timers.js#L214" target="_blank">代码</a>:</li>
+</ol>
+<pre class="prettyprint language-js"><code><span class="pln"> </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">process</span><span class="pun">.</span><span class="pln">domain</span><span class="pun">)</span><span class="pln"> timer</span><span class="pun">.</span><span class="pln">domain </span><span class="pun">=</span><span class="pln"> process</span><span class="pun">.</span><span class="pln">domain</span><span class="pun">;</span></code></pre><p>跟<code>EventEmmiter</code>一样，之后这些<code>timer</code>的回调函数也将被当前的domain包裹住了。</p>
+</li>
+</ul>
+<p><strong>node通过在<code>nextTick</code>, <code>timer</code>, <code>event</code>三个关键的地方插入domain的代码，让它们得以在不同的事件循环中传递。</strong></p>
+<h4>更复杂的domain</h4>
+<p>有些情况下，我们可能会遇到需要更加复杂的domain使用。</p>
+<ul>
+<li>domain嵌套：我们可能会外层有domain的情况下，内层还有其他的domain，使用情景可以在文档中<a href="http://nodejs.org/api/domain.html#domain_explicit_binding" target="_blank">找到</a></li>
+</ul>
+<pre class="prettyprint language-js"><code><span class="com">// create a top-level domain for the server</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> serverDomain </span><span class="pun">=</span><span class="pln"> domain</span><span class="pun">.</span><span class="pln">create</span><span class="pun">();</span><span class="pln">
+
+serverDomain</span><span class="pun">.</span><span class="pln">run</span><span class="pun">(</span><span class="kwd">function</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// server is created in the scope of serverDomain</span><span class="pln">
+  http</span><span class="pun">.</span><span class="pln">createServer</span><span class="pun">(</span><span class="kwd">function</span><span class="pun">(</span><span class="pln">req</span><span class="pun">,</span><span class="pln"> res</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">// req and res are also created in the scope of serverDomain</span><span class="pln">
+    </span><span class="com">// however, we'd prefer to have a separate domain for each request.</span><span class="pln">
+    </span><span class="com">// create it first thing, and add req and res to it.</span><span class="pln">
+    </span><span class="kwd">var</span><span class="pln"> reqd </span><span class="pun">=</span><span class="pln"> domain</span><span class="pun">.</span><span class="pln">create</span><span class="pun">();</span><span class="pln">
+    reqd</span><span class="pun">.</span><span class="pln">add</span><span class="pun">(</span><span class="pln">req</span><span class="pun">);</span><span class="pln">
+    reqd</span><span class="pun">.</span><span class="pln">add</span><span class="pun">(</span><span class="pln">res</span><span class="pun">);</span><span class="pln">
+    reqd</span><span class="pun">.</span><span class="pln">on</span><span class="pun">(</span><span class="str">'error'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">er</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+      console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">(</span><span class="str">'Error'</span><span class="pun">,</span><span class="pln"> er</span><span class="pun">,</span><span class="pln"> req</span><span class="pun">.</span><span class="pln">url</span><span class="pun">);</span><span class="pln">
+      </span><span class="kwd">try</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+        res</span><span class="pun">.</span><span class="pln">writeHead</span><span class="pun">(</span><span class="lit">500</span><span class="pun">);</span><span class="pln">
+        res</span><span class="pun">.</span><span class="pln">end</span><span class="pun">(</span><span class="str">'Error occurred, sorry.'</span><span class="pun">);</span><span class="pln">
+      </span><span class="pun">}</span><span class="pln"> </span><span class="kwd">catch</span><span class="pln"> </span><span class="pun">(</span><span class="pln">er</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+        console</span><span class="pun">.</span><span class="pln">error</span><span class="pun">(</span><span class="str">'Error sending 500'</span><span class="pun">,</span><span class="pln"> er</span><span class="pun">,</span><span class="pln"> req</span><span class="pun">.</span><span class="pln">url</span><span class="pun">);</span><span class="pln">
+      </span><span class="pun">}</span><span class="pln">
+    </span><span class="pun">});</span><span class="pln">
+  </span><span class="pun">}).</span><span class="pln">listen</span><span class="pun">(</span><span class="lit">1337</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">});</span></code></pre><p>为了实现这个功能，其实domain还会偷偷的自己维持一个domain的stack，有兴趣的童鞋可以在<a href="https://github.com/joyent/node/blob/v0.10.4/lib/domain.js#L44" target="_blank">这里</a>看到。</p>
+<h4>回头解决疑惑</h4>
+<p>回过头来，我们再来看刚才遇到的问题：为什么两个看上去都是同样的异步调用，却有一个domain无法捕获到异常？理解了原理之后不难想到，肯定是调用了redis的那个异步调用在抛出错误的这个事件循环内，是不在domain的范围之内的。我们通过一段更加简短的代码来看看，到底在哪里出的问题。</p>
+<pre class="prettyprint language-js"><code><span class="kwd">var</span><span class="pln"> domain </span><span class="pun">=</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'domain'</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">var</span><span class="pln"> </span><span class="typ">EventEmitter</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> require</span><span class="pun">(</span><span class="str">'events'</span><span class="pun">).</span><span class="typ">EventEmitter</span><span class="pun">;</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> e </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">EventEmitter</span><span class="pun">();</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> timer </span><span class="pun">=</span><span class="pln"> setTimeout</span><span class="pun">(</span><span class="kwd">function</span><span class="pln"> </span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  e</span><span class="pun">.</span><span class="pln">emit</span><span class="pun">(</span><span class="str">'data'</span><span class="pun">);</span><span class="pln">  
+</span><span class="pun">},</span><span class="pln"> </span><span class="lit">10</span><span class="pun">);</span><span class="pln">
+
+</span><span class="kwd">function</span><span class="pln"> next</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  e</span><span class="pun">.</span><span class="pln">once</span><span class="pun">(</span><span class="str">'data'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">throw</span><span class="pln"> </span><span class="kwd">new</span><span class="pln"> </span><span class="typ">Error</span><span class="pun">(</span><span class="str">'something wrong here'</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">});</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="kwd">var</span><span class="pln"> d </span><span class="pun">=</span><span class="pln"> domain</span><span class="pun">.</span><span class="pln">create</span><span class="pun">();</span><span class="pln">
+d</span><span class="pun">.</span><span class="pln">on</span><span class="pun">(</span><span class="str">'error'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pln"> </span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  console</span><span class="pun">.</span><span class="pln">log</span><span class="pun">(</span><span class="str">'cache by domain'</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">});</span><span class="pln">
+
+d</span><span class="pun">.</span><span class="pln">run</span><span class="pun">(</span><span class="pln">next</span><span class="pun">);</span><span class="pln">
+</span></code></pre><p>此时我们同样发现，错误不会被domain捕捉到，原因很清晰了：<code>timer</code>和<code>e</code>两个关键的对象在初始化的时候都时没有在domain的范围之内，因此，当在<code>next</code>函数中监听的事件被触发，执行抛出异常的回调函数时，其实根本就没有处于domain的包裹中，当然就不会被<code>domain</code>捕获到异常了！</p>
+<p>其实node针对这种情况，专门设计了一个<a href="http://nodejs.org/api/domain.html#domain_domain_add_emitter" target="_blank">API：domain.add</a>。它可以将domain之外的<code>timer</code>和<code>event</code>对象，添加到当前domain中去。对于上面那个例子：</p>
+<pre class="prettyprint language-js"><code><span class="pln">d</span><span class="pun">.</span><span class="pln">add</span><span class="pun">(</span><span class="pln">timer</span><span class="pun">);</span><span class="pln">
+</span><span class="com">//or</span><span class="pln">
+d</span><span class="pun">.</span><span class="pln">add</span><span class="pun">(</span><span class="pln">e</span><span class="pun">);</span></code></pre><p>将<code>timer</code>或者<code>e</code>任意一个对象添加到domain上，就可以让错误被domain捕获了。</p>
+<p>再来看最开始<code>redis</code>导致domain无法捕捉到异常的问题。我们是不是也有办法可以解决呢？<br>
+看<a href="https://cnodejs.org/user/python" target="_blank">@python</a>发烧友](<a href="http://weibo.com/81715239" target="_blank">http://weibo.com/81715239</a>) 的这条<a href="http://weibo.com/1640328892/zrP7PdLkG" target="_blank">微博</a>我们就能理解，其实对于这种情况，还是没有办法实现最佳的解决方案的。现在对于非预期的异常产生的时候，我们只能够让当前请求超时，然后让这个进程停止服务，之后重新启动。<a href="https://github.com/fengmk2/graceful" target="_blank">graceful</a>模块配合<code>cluster</code>就可以实现这个解决方案。</p>
+<p>__<code>domain</code>十分强大，但不是万能的。__希望在看过这篇文章之后，大家能够正确的使用domian，避免踩坑。:)</p>
+<hr>
+<h4>题外推荐</h4>
+<p>在整个问题排查与代码研究过程中，有一个工具起了巨大的作用：<code>node-inspector</code>，它可以让node代码在chrome下进行单步调试，能够跟进到node源码之中，<a href="http://weibo.com/goddyzhao" target="_blank">@goddyzhao</a>的文章<a href="http://blog.goddyzhao.me/post/11522397416/how-to-debug-node-with-node-inspector" target="_blank">使用node-inspector来调试node</a>详细介绍了如何使用<code>node-inspector</code>。</p>
+</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="panel">
+    <div class="header">
+      <span class="col_fade">30 回复</span>
+    </div>
+    <div class="cell reply_area reply_item
+  " id="reply1" reply_id="516b7b2a6d3827730642c7c7" reply_to_id="">
+  <a class="anchor" id="516b7b2a6d3827730642c7c7"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/hexie" class="user_avatar">
+      <img src="https://gravatar.com/avatar/218220edff46df5465c8c36b0e6d1e2f?size=48" title="hexie"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/hexie">hexie
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516b7b2a6d3827730642c7c7">1楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-hexie">
+    <div class="markdown-text"><p>好文，支持，收藏了。</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply2" reply_id="516c27926d38277306532c7c" reply_to_id="">
+  <a class="anchor" id="516c27926d38277306532c7c"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/shiedman" class="user_avatar">
+      <img src="https://gravatar.com/avatar/849581002e39edc8ffe0cb8b97ee6f12?size=48" title="shiedman"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/shiedman">shiedman
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516c27926d38277306532c7c">2楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-shiedman">
+    <div class="markdown-text"><p>非常精彩的文章，domain运行机制剖析很明了。domain很美好，但要成长为一个成熟稳定的node模块，还有一段很长的路呢。</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply3" reply_id="516eb05c6d382773068985c5" reply_to_id="">
+  <a class="anchor" id="516eb05c6d382773068985c5"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/Pana" class="user_avatar">
+      <img src="./hello_files/552081" title="Pana"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/Pana">Pana
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516eb05c6d382773068985c5">3楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-Pana">
+    <div class="markdown-text"><p>顶起.</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply4" reply_id="516ecc746d382773068bbbee" reply_to_id="">
+  <a class="anchor" id="516ecc746d382773068bbbee"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/firstgeniusboy" class="user_avatar">
+      <img src="https://gravatar.com/avatar/3e64d967fa5dc565760fb91eef10b0d4?size=48" title="firstgeniusboy"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/firstgeniusboy">firstgeniusboy
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516ecc746d382773068bbbee">4楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-firstgeniusboy">
+    <div class="markdown-text"><p>不错，</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply5" reply_id="516f83a56d38277306a7d0e9" reply_to_id="">
+  <a class="anchor" id="516f83a56d38277306a7d0e9"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/hades" class="user_avatar">
+      <img src="https://gravatar.com/avatar/13f0816aec9df5e4915c622bbe5353f3?s=48" title="hades"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/hades">hades
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516f83a56d38277306a7d0e9">5楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-hades">
+    <div class="markdown-text"><p>好东西 ！～～～～～～～～～～～～</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply6" reply_id="516f93286d38277306ad8ea5" reply_to_id="">
+  <a class="anchor" id="516f93286d38277306ad8ea5"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/irvingzu" class="user_avatar">
+      <img src="https://gravatar.com/avatar/93c74bc0855fc063d6a77c41cbae9397?size=48" title="irvingzu"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/irvingzu">irvingzu
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516f93286d38277306ad8ea5">6楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-irvingzu">
+    <div class="markdown-text"><p>您好，DeNA在招聘资深Node.js的职位，您有兴趣了解一下吗？</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply7" reply_id="516fa9c76d38277306b03456" reply_to_id="">
+  <a class="anchor" id="516fa9c76d38277306b03456"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/jimokanghanchao" class="user_avatar">
+      <img src="https://gravatar.com/avatar/186361483e8873c94ccc59f94bb268af?size=48" title="jimokanghanchao"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/jimokanghanchao">jimokanghanchao
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516fa9c76d38277306b03456">7楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-jimokanghanchao">
+    <div class="markdown-text"><p>可不可以这么说 目前的domain配合最后的退出进程再重启是现行最好的方案？</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply8" reply_id="516fafef6d38277306b0cedf" reply_to_id="516fa9c76d38277306b03456">
+  <a class="anchor" id="516fafef6d38277306b0cedf"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/fengmk2" class="user_avatar">
+      <img src="./hello_files/156269" title="fengmk2"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/fengmk2">fengmk2
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516fafef6d38277306b0cedf">8楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-fengmk2">
+    <div class="markdown-text"><p>domain 不能捕获全部异常，还得配合 <code>process.on("uncaughtException")</code> 和 优雅退出。</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply9" reply_id="516fd7356d38277306b4f0e1" reply_to_id="">
+  <a class="anchor" id="516fd7356d38277306b4f0e1"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/DoubleSpout" class="user_avatar">
+      <img src="./hello_files/971370" title="DoubleSpout"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/DoubleSpout">DoubleSpout
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516fd7356d38277306b4f0e1">9楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-DoubleSpout">
+    <div class="markdown-text"><p>学习了，支持好文章</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply10" reply_id="516ffccc6d38277306b7fdc2" reply_to_id="">
+  <a class="anchor" id="516ffccc6d38277306b7fdc2"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/didiaoyu" class="user_avatar">
+      <img src="https://gravatar.com/avatar/19647ac6ec817545ab8714bce2cc10a1?size=48" title="didiaoyu"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/didiaoyu">didiaoyu
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#516ffccc6d38277306b7fdc2">10楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-didiaoyu">
+    <div class="markdown-text"><p>收藏了。。</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply11" reply_id="517cdc706d38277306b7abf5" reply_to_id="">
+  <a class="anchor" id="517cdc706d38277306b7abf5"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/goooto" class="user_avatar">
+      <img src="https://gravatar.com/avatar/432490bd1b91674e36ebe1da445cb87e?size=48" title="goooto"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/goooto">goooto
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#517cdc706d38277306b7abf5">11楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-goooto">
+    <div class="markdown-text"><p>学习了。</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply12" reply_id="518623d66d3827730663d182" reply_to_id="">
+  <a class="anchor" id="518623d66d3827730663d182"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/liyatang" class="user_avatar">
+      <img src="https://gravatar.com/avatar/0a2b3df28d11335abd02ae17b1e46959?s=48" title="liyatang"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/liyatang">liyatang
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#518623d66d3827730663d182">12楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-liyatang">
+    <div class="markdown-text"><p>好文…</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply13" reply_id="5189fdf163e9f8a54207d1b0" reply_to_id="">
+  <a class="anchor" id="5189fdf163e9f8a54207d1b0"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/hotwhf" class="user_avatar">
+      <img src="https://gravatar.com/avatar/36f480b619df8690f86e4a529aed1aa8?size=48" title="hotwhf"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/hotwhf">hotwhf
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#5189fdf163e9f8a54207d1b0">13楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-hotwhf">
+    <div class="markdown-text"><p>好文</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply14" reply_id="518c4b2f63e9f8a54259439c" reply_to_id="">
+  <a class="anchor" id="518c4b2f63e9f8a54259439c"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/rainy" class="user_avatar">
+      <img src="https://gravatar.com/avatar/642ec86860c6fdc1041fe6aaa8086e94?size=48" title="rainy"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/rainy">rainy
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#518c4b2f63e9f8a54259439c">14楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-rainy">
+    <div class="markdown-text"><p>我郁闷呀 ，我怎么发布不了话题啊  我有问题  没办法问啊</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply15" reply_id="518c4b4663e9f8a54259456d" reply_to_id="">
+  <a class="anchor" id="518c4b4663e9f8a54259456d"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/rainy" class="user_avatar">
+      <img src="https://gravatar.com/avatar/642ec86860c6fdc1041fe6aaa8086e94?size=48" title="rainy"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/rainy">rainy
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#518c4b4663e9f8a54259456d">15楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-rainy">
+    <div class="markdown-text"><p>有没有交流nodejs的QQ群哦</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply16" reply_id="518c68f563e9f8a5425d0757" reply_to_id="518c4b2f63e9f8a54259439c">
+  <a class="anchor" id="518c68f563e9f8a5425d0757"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/dead-horse" class="user_avatar">
+      <img src="./hello_files/985607" title="dead-horse"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/dead-horse">dead-horse
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#518c68f563e9f8a5425d0757">16楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-dead-horse">
+    <div class="markdown-text"><p>去 nodeclub 的 github 上描述一下问题，提个<a href="https://github.com/cnodejs/nodeclub/issues?state=open" target="_blank">issue</a></p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply17" reply_id="5191d44f63e9f8a542bc479b" reply_to_id="">
+  <a class="anchor" id="5191d44f63e9f8a542bc479b"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/bsspirit" class="user_avatar">
+      <img src="./hello_files/170283" title="bsspirit"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/bsspirit">bsspirit
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#5191d44f63e9f8a542bc479b">17楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-bsspirit">
+    <div class="markdown-text"><p>好文章！</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply18" reply_id="519de00263e9f8a542f6a224" reply_to_id="516fa9c76d38277306b03456">
+  <a class="anchor" id="519de00263e9f8a542f6a224"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/ym1623" class="user_avatar">
+      <img src="https://gravatar.com/avatar/39b2fe44b9d0a086a64f76315a7cf25c?size=48" title="ym1623"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/ym1623">ym1623
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#519de00263e9f8a542f6a224">18楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-ym1623">
+    <div class="markdown-text"><p><a href="https://cnodejs.org/user/suqian" target="_blank">@suqian</a> 我很认同你说的话，<code>process.on("uncaughtException")</code>在servers中可以进行整个错误的抓包处理，domain我觉得楼主给的方案还不是很成熟，另外在写代码的时候应封装好，对错误做回调处理，如：
+<code>var login = function(fn) { var results = 1 + 2; return fn(err,results);}</code> 调用代码:</p>
+<pre class="prettyprint"><code><span class="pln">login</span><span class="pun">(</span><span class="kwd">function</span><span class="pun">(</span><span class="pln">err</span><span class="pun">,</span><span class="pln"> cookie</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{});</span></code></pre><p>之前nodejs官网并未发布异步回调所产生错误的解决方案我想应该是本身nodejs语言所致，所以我觉得能利用本身的语言特点去解决才最好</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply19" reply_id="51a70864555d34c6780a6a98" reply_to_id="516fa9c76d38277306b03456">
+  <a class="anchor" id="51a70864555d34c6780a6a98"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/dead-horse" class="user_avatar">
+      <img src="./hello_files/985607" title="dead-horse"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/dead-horse">dead-horse
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#51a70864555d34c6780a6a98">19楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-dead-horse">
+    <div class="markdown-text"><p><a href="https://cnodejs.org/user/ym1623" target="_blank">@ym1623</a> 所有的异步调用的异常，都是通过回调函数的第一个参数返回的。我们需要domain并不是因为想要去代替这种形式。尽管domain的api里面有这样的用法：</p>
+<pre class="prettyprint"><code><span class="kwd">var</span><span class="pln"> d </span><span class="pun">=</span><span class="pln"> domain</span><span class="pun">.</span><span class="pln">create</span><span class="pun">();</span><span class="pln">
+
+</span><span class="kwd">function</span><span class="pln"> readSomeFile</span><span class="pun">(</span><span class="pln">filename</span><span class="pun">,</span><span class="pln"> cb</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  fs</span><span class="pun">.</span><span class="pln">readFile</span><span class="pun">(</span><span class="pln">filename</span><span class="pun">,</span><span class="pln"> </span><span class="str">'utf8'</span><span class="pun">,</span><span class="pln"> d</span><span class="pun">.</span><span class="pln">intercept</span><span class="pun">(</span><span class="kwd">function</span><span class="pun">(</span><span class="pln">data</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="com">// note, the first argument is never passed to the</span><span class="pln">
+    </span><span class="com">// callback since it is assumed to be the 'Error' argument</span><span class="pln">
+    </span><span class="com">// and thus intercepted by the domain.</span><span class="pln">
+
+    </span><span class="com">// if this throws, it will also be passed to the domain</span><span class="pln">
+    </span><span class="com">// so the error-handling logic can be moved to the 'error'</span><span class="pln">
+    </span><span class="com">// event on the domain instead of being repeated throughout</span><span class="pln">
+    </span><span class="com">// the program.</span><span class="pln">
+    </span><span class="kwd">return</span><span class="pln"> cb</span><span class="pun">(</span><span class="kwd">null</span><span class="pun">,</span><span class="pln"> JSON</span><span class="pun">.</span><span class="pln">parse</span><span class="pun">(</span><span class="pln">data</span><span class="pun">));</span><span class="pln">
+  </span><span class="pun">}));</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+d</span><span class="pun">.</span><span class="pln">on</span><span class="pun">(</span><span class="str">'error'</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(</span><span class="pln">er</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// an error occurred somewhere.</span><span class="pln">
+  </span><span class="com">// if we throw it now, it will crash the program</span><span class="pln">
+  </span><span class="com">// with the normal line number and stack message.</span><span class="pln">
+</span><span class="pun">});</span></code></pre><p>这可能是node尝试通过domain来统一处理嵌套异步回调中的异常。 但是由于文章中所描述的domain的一些问题，这个暂时还不是很好用。不过异步流程工具已经很多了。只要按照约定，把错误放在callback的第一个参数返回。可以有很多种工具来优化代码。</p>
+<p>我们使用domain的原因，只是为了捕获那些意料之外的错误，例如：</p>
+<pre class="prettyprint"><code><span class="kwd">if</span><span class="pln"> </span><span class="pun">(!</span><span class="pln">data</span><span class="pun">.</span><span class="pln">length</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="com">//do something</span><span class="pln">
+</span><span class="pun">}</span></code></pre><p>类似这种不小心出现的错误，如果真的在线上出现了，我们想要把这个错误记录下来以便之后的修改，同时可以给前端一个友好的500响应，而不是只能超时返回（因为用uncaughtException捕捉到的异常，我们也没有办法知道这个异常是在哪个请求出现的）。</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply20" reply_id="51a711e1555d34c6780ce507" reply_to_id="516fa9c76d38277306b03456">
+  <a class="anchor" id="51a711e1555d34c6780ce507"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/ym1623" class="user_avatar">
+      <img src="https://gravatar.com/avatar/39b2fe44b9d0a086a64f76315a7cf25c?size=48" title="ym1623"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/ym1623">ym1623
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#51a711e1555d34c6780ce507">20楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-ym1623">
+    <div class="markdown-text"><p><a href="https://cnodejs.org/user/dead_horse" target="_blank">@dead_horse</a> 我一般都是这样做的：process.on(‘uncaughtException’, console.dir);直接把错误信息打印在控制台中或者写在日志中</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply21" reply_id="51a71675555d34c6780e3b5c" reply_to_id="516fa9c76d38277306b03456">
+  <a class="anchor" id="51a71675555d34c6780e3b5c"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/dead-horse" class="user_avatar">
+      <img src="./hello_files/985607" title="dead-horse"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/dead-horse">dead-horse
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#51a71675555d34c6780e3b5c">21楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-dead-horse">
+    <div class="markdown-text"><p><a href="https://cnodejs.org/user/ym1623" target="_blank">@ym1623</a> 嗯， 为什么我们想要用domain替代这种方案的原因在node<a href="http://www.nodejs.org/api/process.html#process_event_uncaughtexception" target="_blank">文档</a>中提到了。</p>
+<blockquote>
+<p>Note that uncaughtException is a very crude mechanism for exception handling and may be removed in the future.
+Don’t use it, use domains instead. If you do use it, restart your application after every unhandled exception!</p>
+</blockquote>
+<p>所以我们最终在domain有缺陷的情况下，只能使用<a href="https://github.com/TBEDP/show-me-the-code/blob/master/2013/0419/suqian.md" target="_blank">graceful</a>的这个并不完美的解决方案。</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply22" reply_id="51a80ad9555d34c67821545b" reply_to_id="516fa9c76d38277306b03456">
+  <a class="anchor" id="51a80ad9555d34c67821545b"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/ym1623" class="user_avatar">
+      <img src="https://gravatar.com/avatar/39b2fe44b9d0a086a64f76315a7cf25c?size=48" title="ym1623"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/ym1623">ym1623
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#51a80ad9555d34c67821545b">22楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-ym1623">
+    <div class="markdown-text"><p><a href="https://cnodejs.org/user/dead_horse" target="_blank">@dead_horse</a> 我觉得还是写测试代码好点，在把项目推上去的时候先运行npm test一次，保证代码质量不出错，node服务抓错防止服务不挂掉也是不错的，但是现在没有一个成熟的方案出来，先写个process.on(‘uncaughtException’, console.dir)用着也可以.</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply23" reply_id="51a8382c555d34c67826a60a" reply_to_id="516fa9c76d38277306b03456">
+  <a class="anchor" id="51a8382c555d34c67826a60a"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/dead-horse" class="user_avatar">
+      <img src="./hello_files/985607" title="dead-horse"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/dead-horse">dead-horse
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#51a8382c555d34c67826a60a">23楼•3 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-dead-horse">
+    <div class="markdown-text"><p><a href="https://cnodejs.org/user/ym1623" target="_blank">@ym1623</a> 那肯定是要自己代码保证不出错啊。domain和uncaoughtException都只是预防意外而已。:)</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply24" reply_id="51bec93960af11cd336ebf24" reply_to_id="516fa9c76d38277306b03456">
+  <a class="anchor" id="51bec93960af11cd336ebf24"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/ym1623" class="user_avatar">
+      <img src="https://gravatar.com/avatar/39b2fe44b9d0a086a64f76315a7cf25c?size=48" title="ym1623"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/ym1623">ym1623
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#51bec93960af11cd336ebf24">24楼•2 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-ym1623">
+    <div class="markdown-text"><p><a href="https://cnodejs.org/user/dead_horse" target="_blank">@dead_horse</a> 我之前无意间用forever watch一个文件作为项目目录时，在出错的时候我将错误log指定到该项目中，这样的话项目一报错的话就会在在该项目下的错误log中写入错误日志，而forever watch此时就起作用了，以为项目有改动自动重启，不知道这个算不算一个取巧.</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply25" reply_id="51c044ab57628b975f087eb8" reply_to_id="">
+  <a class="anchor" id="51c044ab57628b975f087eb8"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/kevinchen8621" class="user_avatar">
+      <img src="https://gravatar.com/avatar/f8b9c70ec6887deb42ac39d0ef99dfa1?size=48" title="kevinchen8621"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/kevinchen8621">kevinchen8621
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#51c044ab57628b975f087eb8">25楼•2 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-kevinchen8621">
+    <div class="markdown-text"><p>234123412341</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply26" reply_id="51c1460057628b975f22c951" reply_to_id="">
+  <a class="anchor" id="51c1460057628b975f22c951"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/wbpmrck" class="user_avatar">
+      <img src="https://gravatar.com/avatar/43a9b970f1b0f38661e9f1dca3d9fe86?size=48" title="wbpmrck"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/wbpmrck">wbpmrck
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#51c1460057628b975f22c951">26楼•2 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-wbpmrck">
+    <div class="markdown-text"><p>node-inspector貌似现在已经无法使用了，没人维护了</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply27" reply_id="51c1465d57628b975f22d563" reply_to_id="51c1460057628b975f22c951">
+  <a class="anchor" id="51c1465d57628b975f22d563"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/dead-horse" class="user_avatar">
+      <img src="./hello_files/985607" title="dead-horse"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/dead-horse">dead-horse
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#51c1465d57628b975f22d563">27楼•2 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-dead-horse">
+    <div class="markdown-text"><p>在<code>node@v0.8.x</code>下应该还是能用的吧？</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply28" reply_id="5203309044e76d216a634ba2" reply_to_id="">
+  <a class="anchor" id="5203309044e76d216a634ba2"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/stevel" class="user_avatar">
+      <img src="https://gravatar.com/avatar/e3b67268911675f6e2e087cd444a7dfb?size=48" title="stevel"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/stevel">stevel
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#5203309044e76d216a634ba2">28楼•2 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-stevel">
+    <div class="markdown-text"><p>好文章</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply29" reply_id="52c16c3a8a716e0b15a3e3af" reply_to_id="">
+  <a class="anchor" id="52c16c3a8a716e0b15a3e3af"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/chemdemo" class="user_avatar">
+      <img src="./hello_files/1014734" title="chemdemo"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/chemdemo">chemdemo
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#52c16c3a8a716e0b15a3e3af">29楼•2 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-chemdemo">
+    <div class="markdown-text"><p>这几天也在研究domain，其实lz提到使用add()的例子，改成如下即可：
+var e = new events.EventEmitter();</p>
+<p>e.on(‘data’, function(err) {
+if(err) throw err;
+});</p>
+<p>var d = domain.create();</p>
+<p>d.on(‘error’, function(err) {
+console.error(‘Error caught by domain:’, err);
+});</p>
+<p>d.run(function() {
+e.emit(‘data’, new Error(‘Handle data error!’));
+});</p>
+<p>这也符合一般人写代码的习惯，先创建EventEmitter，绑定事件然后再在其他地方emit即可。
+为啥要在run里头绑定事件？
+看下events模块的代码，它会在事件触发的时候检查当前活动的domain的：
+<a href="https://github.com/joyent/node/blob/v0.10.4/lib/events.js#L53%EF%BC%8C" target="_blank">https://github.com/joyent/node/blob/v0.10.4/lib/events.js#L53，</a>
+蛋是在绑定事件的时候却未做任何的检查。</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+<div class="cell reply_area reply_item
+  " id="reply30" reply_id="53b2314f399ed9e07d171187" reply_to_id="">
+  <a class="anchor" id="53b2314f399ed9e07d171187"></a>
+
+  <div class="author_content">
+    <a href="https://cnodejs.org/user/struCoder" class="user_avatar">
+      <img src="./hello_files/6498477" title="struCoder"></a>
+
+    <div class="user_info">
+      <a class="dark reply_author" href="https://cnodejs.org/user/struCoder">struCoder
+      </a>
+      <a class="reply_time" href="https://cnodejs.org/topic/516b64596d38277306407936#53b2314f399ed9e07d171187">30楼•1 年前</a>
+    </div>
+    <div class="user_action">
+      <span>
+        <i class="fa up_btn
+          fa-thumbs-o-up
+          invisible" title="喜欢"></i>
+        <span class="up-count">
+          
+        </span>
+      </span>
+      
+      <span>
+        
+      </span>
+    </div>
+  </div>
+  <div class="reply_content from-struCoder">
+    <div class="markdown-text"><p>最近在研究node中的详细错误记录处理（记录stack信息），在官网上找到了process的uncaughtException，但是这个不怎么友好，于是在研究domain，之后看到楼主的这篇好文章，顶 ：）</p>
+</div>
+  </div>
+  <div class="clearfix">
+    <div class="reply2_area">
+      
+    </div>
+  </div>
+</div>
+
+  </div>
+  
+  
+</div>
+
+<div class="replies_history" style="display: none;">
+  <div class="inner_content"></div>
+  <div class="anchor"></div>
+</div>
+
+
+
+
+<script type="text/javascript">
+  (function(){
+    var timer = null; //对话框延时定时器
+    // 初始化 $('.replies_history')
+    var $repliesHistory = $('.replies_history');
+    var $repliesHistoryContent = $repliesHistory.find('.inner_content');
+    $repliesHistory.hide();
+    // END
+    // 鼠标移入对话框清除隐藏定时器；移出时隐藏对话框
+    $repliesHistory.on('mouseenter', function(){
+      clearTimeout(timer);
+    }).on('mouseleave', function(){
+      $repliesHistory.fadeOut('fast');
+    });
+    // 显示被 at 用户的本页评论
+    if ($('.reply2_item').length === 0) {
+      // 只在流式评论布局中使用
+
+      $('#content').on('mouseenter', '.reply_content a', function (e) {
+        clearTimeout(timer);
+        var $this = $(this);
+        if ($this.text()[0] === '@') {
+          var thisText = $this.text().trim();
+          var loginname = thisText.slice(1);
+          var offset = $this.offset();
+          var width = $this.width();
+          var mainOffset = $('#main').offset();
+          $repliesHistory.css('left', offset.left-mainOffset.left+width+10); // magic number
+          $repliesHistory.css('top', offset.top-mainOffset.top-10); // magic number
+          $repliesHistory.css({
+            'z-index': 1,
+          });
+          $repliesHistoryContent.empty();
+          var chats = [];
+          var replyToId = $this.closest('.reply_item').attr('reply_to_id');
+          while (replyToId) {
+            var $replyItem = $('.reply_item[reply_id=' + replyToId + ']');
+            var replyContent = $replyItem.find('.reply_content').text().trim();
+            if (replyContent.length > 0) {
+              chats.push([
+                $($replyItem.find('.user_avatar').html()).attr({
+                  height: '30px',
+                  width: '30px',
+                }), // avatar
+                (replyContent.length>300?replyContent.substr(0,300)+'...':replyContent), // reply content
+                '<a href="#'+replyToId+'" class="scroll_to_original" title="查看原文">↑</a>'
+              ]);
+            }
+            replyToId = $replyItem.attr('reply_to_id');
+          }
+          if(chats.length > 0) {
+            chats.reverse();
+
+            $repliesHistoryContent.append('<div class="title">查看对话</div>');
+            chats.forEach(function (pair, idx) {
+              var $chat = $repliesHistoryContent.append('<div class="item"></div>');
+              $chat.append(pair[0]); // 头像
+              $chat.append($('<span>').text(pair[1])); // 内容
+              $chat.append(pair[2]); // 查看原文 anchor
+            });
+            $repliesHistory.fadeIn('fast');
+          }else{
+            $repliesHistory.hide();
+          }
+        }
+      }).on('mouseleave', '.reply_content a', function (e) {
+        timer = setTimeout(function(){
+          $repliesHistory.fadeOut('fast');
+        }, 500);
+      });
+    }
+    // END 显示被 at 用户的本页评论
+  })();
+
+  // 点赞
+  $('.up_btn').click(function (e) {
+    var $this = $(this);
+    var replyId = $this.closest('.reply_area').attr('reply_id');
+    $.ajax({
+      url: '/reply/' + replyId + '/up',
+      method: 'POST',
+    }).done(function (data) {
+      if (data.success) {
+        $this.removeClass('invisible');
+        var currentCount = Number($this.next('.up-count').text().trim()) || 0;
+        if (data.action === 'up') {
+          $this.next('.up-count').text(currentCount + 1);
+          $this.addClass('uped');
+        } else {
+          if (data.action === 'down') {
+            $this.next('.up-count').text(currentCount - 1);
+            $this.removeClass('uped');
+          }
+        }
+      } else {
+        alert(data.message);
+      }
+    }).fail(function (xhr) {
+      if (xhr.status === 403) {
+        alert('请先登录，登陆后即可点赞。');
+      }
+    });
+  });
+  // END 点赞
+</script>
+
+</div>
+<div id="backtotop" style="top: 362px; right: 0px;">回到顶部</div>
+<div id="footer">
+  <div id="footer_main">
+    <div class="links">
+      <a class="dark" href="https://cnodejs.org/rss">RSS</a>
+      |
+      <a class="dark" href="https://github.com/cnodejs/nodeclub/">源码地址</a>
+    </div>
+
+    <div class="col_fade">
+
+  <p>CNode 社区为国内最专业的 Node.js 开源技术社区，致力于 Node.js 的技术研究。</p>
+  <p>服务器赞助商为
+    <a href="http://www.ucloud.cn/?utm_source=zanzhu&utm_campaign=cnodejs&utm_medium=display" target="_blank" class="sponsor_outlink" data-label="ucloud">
+      <img src="./hello_files/FmZmxXDULF26HWvSMLGZX6Vxp5MH" title="ucloud" alt="ucloud" width="92px">
+    </a>
+  ，存储赞助商为
+    <a href="http://www.qiniu.com/?ref=cnode" target="_blank" class="sponsor_outlink" data-label="qiniu_bottom">
+      <img src="./hello_files/qiniu.png" title="七牛云存储" alt="七牛云存储" width="115px">
+    </a>
+  </p>
+  <p>新手搭建 Node.js 服务器，推荐使用无需备案的 <a href="https://www.linode.com/?r=15ca84df052ab2ac2cc4ac21714969900782a827">Linode(https://www.linode.com)</a> 或 <a href="https://www.digitalocean.com/?refcode=eba02656eeb3">DigitalOcean(https://www.digitalocean.com/)</a></p>
+</div>
+
+
+  </div>
+</div>
+<div id="sidebar-mask"></div>
+
+
+<script>
+  // google analytics
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script', "https://www.google-analytics.com/analytics.js",'ga');
+
+  ga('create', 'UA-41753901-5', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+<div style="display:none;">
+  <script src="./hello_files/z_stat.php" language="JavaScript"></script><script src="./hello_files/core.php" charset="utf-8" type="text/javascript"></script><a href="http://www.cnzz.com/stat/website.php?web_id=1254020586" target="_blank" title="站长统计">站长统计</a>
+</div>
+
+
+<script type="text/javascript">
+  // 百度有很多 8080 的链接
+  if (location.port == 8080) {
+    location.port = 80
+  }
+</script>
+
+
+
+</body></html>
