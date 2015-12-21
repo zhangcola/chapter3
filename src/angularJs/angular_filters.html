@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div ng-controller="myController">
+        <h2>Basic Filters</h2>
+        Number: {{1234.56789 | number:3}}<br>
+        Currency : {{123.324|currency : "$"}}<br>
+        JSON:{{JSONObj|json}}<br>
+        Limit Array: {{days | limitTo :3}}<br>
+        Limit String: {{word | limitTo:5}}<br>
+        Uppercase : {{word | uppercase | limitTo : 10}}
+        Lowercase : {{word | lowercase | limitTo: 10}}
+    </div>
+    <script src="http://code.angularjs.org/1.2.9/angular.min.js"></script>
+    <script src="./angular_filters.js"></script>
+</body>
+</html>

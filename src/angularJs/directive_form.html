@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div ng-controller="myController">
+        <h2>Form Directive</h2>
+        <input type="text" ng-model="someText">{{someText}}<hr>
+        <input type="checkbox" ng-model="cbValue" ng-true-value="AWESOME" ng-false-value="BUMMER">
+        checkBox:{{cbValue}}<br />
+        <input type="radio" ng-model="cameraName" value="Cannon">Cannon<br/>
+        <input type="radio" ng-model="cameraName" value="Nikon">Nikon<br />
+        Selected Camera : {{cameraName}}
+        <select ng-model="camera"
+                ng-options = "c.model group by c.make for c in cameras">
+        </select>
+        {{camera | json}}
+    </div>
+</body>
+<script src="http://code.angularjs.org/1.2.9/angular.min.js"></script>
+<script src="./directive_form.js"></script>
+</html>
